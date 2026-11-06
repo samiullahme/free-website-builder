@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SiteForge — AI website builder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing:
+          border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: 'Sora', sans-serif;
+        background: #0d0f16;
+        color: #e8eaf2;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow-x: hidden;
+      }
+      .glow {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(600px 400px at 20% 0%, rgba(99, 102, 241, 0.18), transparent 70%),
+          radial-gradient(700px 500px at 85% 30%, rgba(217, 131, 166, 0.12), transparent 70%);
+      }
+      main {
+        position: relative;
+        width: 100%;
+        max-width: 760px;
+        padding: 90px 24px 40px;
+        text-align: center;
+      }
+      .logo {
+        font-size: 15px;
+        font-weight: 800;
+        letter-spacing: 3px;
+        color: #8b8ff5;
+        margin-bottom: 26px;
+      }
+      h1 {
+        font-size: clamp(34px, 6vw, 54px);
+        font-weight: 800;
+        line-height: 1.12;
+        margin-bottom: 18px;
+      }
+      h1 em {
+        font-style: normal;
+        background: linear-gradient(90deg, #8b8ff5, #d983a6);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .sub {
+        color: #9aa1b5;
+        font-size: 17px;
+        line-height: 1.6;
+        max-width: 540px;
+        margin: 0 auto 40px;
+      }
+      form {
+        background: #141826;
+        border: 1px solid #262c40;
+        border-radius: 16px;
+        padding: 18px;
+        text-align: left;
+      }
+      textarea {
+        width: 100%;
+        min-height: 110px;
+        background: transparent;
+        border: 0;
+        outline: none;
+        resize: vertical;
+        color: #e8eaf2;
+        font: 15px/1.6 'Sora', sans-serif;
+      }
+      textarea::placeholder {
+        color: #5b6278;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin-top: 14px;
+        flex-wrap: wrap;
+      }
+      .chips {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .chip {
+        font-size: 12.5px;
+        color: #aab0c4;
+        background: #1b2133;
+        border: 1px solid #2a3149;
+        border-radius: 999px;
+        padding: 6px 12px;
+        cursor: pointer;
+        transition: 0.15s;
+      }
+      .chip:hover {
+        border-color: #8b8ff5;
+        color: #dfe3f5;
+      }
+      button.generate {
+        background: linear-gradient(90deg, #6366f1, #8b5cf6);
+        color: #fff;
+        border: 0;
+        border-radius: 10px;
+        padding: 13px 28px;
+        font: 600 15px 'Sora', sans-serif;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: 0.15s;
+      }
+      button.generate:hover {
+        filter: brightness(1.12);
+        transform: translateY(-1px);
+      }
+      button.generate:disabled {
+        opacity: 0.6;
+        cursor: wait;
+        transform: none;
+      }
+      .status {
+        min-height: 24px;
+        margin-top: 18px;
+        font-size: 14px;
+        color: #8b8ff5;
+      }
+      .status.error {
+        color: #f87171;
+      }
+      .spinner {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border: 2px solid #6366f1;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        vertical-align: -2px;
+        margin-right: 8px;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .steps {
+        display: flex;
+        gap: 28px;
+        justify-content: center;
+        margin-top: 56px;
+        flex-wrap: wrap;
+      }
+      .step {
+        font-size: 13.5px;
+        color: #7d8499;
+      }
+      .step b {
+        display: block;
+        color: #cdd2e2;
+        font-size: 14.5px;
+        margin-bottom: 4px;
+      }
+      .step span {
+        color: #8b8ff5;
+        font-weight: 800;
+        margin-right: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="glow"></div>
+    <main>
+      <div class="logo">SITEFORGE · LOCAL WEBSITE BUILDER</div>
+      <h1>Describe a website.<br />Then <em>edit it visually</em>.</h1>
+      <p class="sub">
+        AI generates a complete website from your prompt, and it opens straight inside a drag-and-drop editor.
+        Change anything, then download your code.
+      </p>
+
+      <p id="mode" class="status"></p>
+      <form id="gen-form">
+        <label for="prompt">Describe your website</label>
+        <textarea
+          id="prompt" required maxlength="4000"
+          placeholder="e.g. A landing page for a specialty coffee roastery with warm tones, a menu section, and a subscription form…"
+        ></textarea>
+        <div class="row">
+          <div class="chips">
+            <button type="button" class="chip">Coffee shop landing page</button>
+            <button type="button" class="chip">Portfolio for a photographer</button>
+            <button type="button" class="chip">SaaS pricing page</button>
+            <button type="button" class="chip">Gym homepage</button>
+          </div>
+          <button class="generate" type="submit">Generate website →</button>
+        </div>
+      </form>
+
+      <div class="status" id="status" role="status" aria-live="polite"></div>
+      <details style="text-align:left;margin-top:24px">
+        <summary>Already have HTML? Import a website</summary>
+        <form id="import-form" style="margin-top:16px">
+          <label for="html-input">Complete HTML document (inline CSS or HTTPS stylesheet links)</label>
+          <textarea id="html-input" required placeholder="<!doctype html>..."></textarea>
+          <p>Scripts and active embeds are removed for safety. Local assets must be hosted separately.</p>
+          <button class="generate" type="submit">Open in editor</button>
+        </form>
+      </details>
+      <section style="text-align:left;margin-top:32px">
+        <h2 style="font-size:18px">Saved projects</h2>
+        <ul id="projects" style="list-style:none;padding:0;line-height:2"></ul>
+      </section>
+
+      <div class="steps">
+        <div class="step"><span>1</span><b>Describe</b>what you want in plain words</div>
+        <div class="step"><span>2</span><b>AI builds it</b>complete HTML, ready to edit</div>
+        <div class="step"><span>3</span><b>You edit</b>click, drag, restyle — then export</div>
+      </div>
+    </main>
+
+    <script src="/home.js" defer></script>
+  </body>
+</html>
